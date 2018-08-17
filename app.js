@@ -119,12 +119,8 @@ app.post('/message', function(req,res){
                  name.push((coinData[i].name).replace(" ","+"));   
             }
         }//for
-         for(var j=0;j<name.length;j++){
-            if(j>0){
-                testData += "\n\n";
-            }
             var foundStr = 'card__date\">';
-            var parsingHTML = "https://coinmarketcal.com/?form%5Bcoin%5D%5B%5D="+name[j]+"+%28"+msg.toUpperCase()+"%29";
+            var parsingHTML = "https://coinmarketcal.com/?form%5Bcoin%5D%5B%5D="+name[0]+"+%28"+msg.toUpperCase()+"%29";
                 
             var coinHTML = request('GET', parsingHTML);
             var coinData = coinHTML.getBody().toString().split(foundStr);
@@ -137,16 +133,16 @@ app.post('/message', function(req,res){
              pickData = pickData.replace(/"/gi,"");
              
              if(pickData != ''){
-                testData +=  msg.toUpperCase()+"("+name[j].replace("+"," ")+") 호재정리\n"+pickData;
+                testData +=  msg.toUpperCase()+"("+name[0].replace("+"," ")+") 호재정리\n"+pickData;
             }else{  
-                    testData +=  msg.toUpperCase()+"("+name[j].replace("+"," ")+")은(는) 아직 호재가 없어요 ㅠ_ㅠ";
+                    testData +=  msg.toUpperCase()+"("+name[0].replace("+"," ")+")은(는) 아직 호재가 없어요 ㅠ_ㅠ";
             }
             send = {
                 'message' : {
                     'text' : testData
                 }
             }     
-         }
+         
            
        }else if(msg=="도미"||msg=="시총"||msg=="ㄷㅁ"||msg=="ㅅㅊ"){
         var dominanceD = request('GET', domin);
@@ -210,7 +206,7 @@ app.post('/message', function(req,res){
     }else if(msg=='메뉴얼'){
         send = {
             'message' : {
-                'text' :   "코인요정 메뉴얼(행복)\n심볼 : 달러, 사토시, 한화 (coinmarketcap)\n거래소 심볼 : 상장된 거래소 목록 (거래소 볼륨순)\n김프 심볼: 업비트 기준 김프\n도미(시총) : 도미넌스, 시총\n비트 : 거래소별 실시간 비트가격\n마진 : 현재 빗파 롱, 숏 개수\nROI 심볼 : 코인 ICO 수익률(tokenstats)\n호재 심볼 : 코인별 이벤트(coinmarketcal)"
+                'text' :   "코인요정 메뉴얼(행복)\n심볼 : 달러, 사토시, 한화 \n거래소 심볼 : 상장된 거래소 목록 (거래소 볼륨순)\n김프 심볼: 업비트 기준 김프\n도미(시총) : 도미넌스, 시총\n비트 : 거래소별 실시간 비트가격\n마진 : 현재 빗파 롱, 숏 개수\nROI 심볼 : 코인 ICO 수익률\n호재 심볼 : 코인별 이벤트"
             }
         }
     }else if(msg.toUpperCase().startsWith("ROI")){
@@ -256,6 +252,10 @@ app.post('/message', function(req,res){
                var coinMKC = thousandComma(parseInt(coinArray[i].market_cap_usd));
                var vol = thousandComma(parseInt(coinArray[i]["24h_volume_usd"]));
                
+               if(reply!=""){
+                   reply += "\n\n";
+               }
+               
                reply  += coinArray[i].name+"("+coinArray[i].rank+"위)\n $"+coinUSD;
                
                if(coinArray[i].percent_change_24h!=null){
@@ -265,7 +265,7 @@ app.post('/message', function(req,res){
                }
 
                if(coinMKC!='NaN'){
-                  reply += "\nCap $"+coinMKC+"\n\n";
+                  reply += "\nCap $"+coinMKC;
                }
              }
            }
@@ -276,7 +276,7 @@ app.post('/message', function(req,res){
             }
     }//else
 
-    if(send.message == null){
+    if(send.message == ""||send.message == null){
         send = {
             'message' : {
                 'text' : "해당하는 명령어가 없습니다! 메뉴얼을 입력하여 명령어를 확인해주세요."
