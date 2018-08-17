@@ -33,7 +33,6 @@ app.get('/keyboard', function(req,res) {
 app.post('/message', function(req,res){
 
     var msg = req.body.content;
-    console.log('전달받은 메세지 : '+msg);
     var send = {}; //전달할 데이터
 
     try{
